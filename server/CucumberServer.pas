@@ -2,6 +2,7 @@ unit CucumberServer;
 
 {$mode objfpc}{$H+}
 interface
+procedure StartServer();
 
 implementation
 {$ifdef fpc}
@@ -10,9 +11,10 @@ implementation
 
 {$apptype console}
 
+
 uses
   Classes, blcksock, sockets, Synautil, SysUtils, CucumberRequest, CucumberResponse,
-  TypInfo, CucumberProcessor, SampleSteps;
+  TypInfo, CucumberProcessor;
 
 
 
@@ -44,6 +46,8 @@ begin
   WriteLn('<' + s);
 end;
 
+procedure StartServer();
+
 var
   ListenerSocket, ConnectionSocket: TTCPBlockSocket;
 begin
@@ -67,6 +71,8 @@ begin
 
   ListenerSocket.Free;
   ConnectionSocket.Free;
-end.
+end;
+
+
 end.
 
