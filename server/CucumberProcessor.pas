@@ -81,14 +81,21 @@ var
    strArgsCommands: TArgsCommands;
    iCurrentInvoke: Integer;
    action: TAction;
+   lookup: TLookupAction;
 begin
   strArgsCommands := request.Args;
   iCurrentInvoke := 0;
   while(iCurrentInvoke < strArgsCommands.Count) do
   begin
     try
-      action := TLookupAction(TWorld.Get().FActions[StrToInt(request.StepId)]).Action;
-      action(strArgsCommands[iCurrentInvoke]);
+      lookup := TLookupAction(TWorld.Get().FActions[StrToInt(request.StepId)]);
+
+      if(Assigned(lookup.Action)) then
+        lookup.Action(strArgsCommands[iCurrentInvoke])
+      else if(Assigned(lookup.Action)) then
+        lookup.Action1()
+      else
+        raise ECucumberTestException.Create('Unable to execute step');
 
       Result := TSuccessResponse.Create();
       Except on E: ECucumberTestException do

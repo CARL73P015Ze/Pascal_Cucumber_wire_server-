@@ -11,12 +11,15 @@ type
  ECucumberTestException = class(Exception)
  end;
 
+TActionNoParams = procedure() of object;
 TAction = procedure(const strList: TStringList) of object;
 
+
 TLookupAction = class
-  public
-    ActionRegx: string;
-    Action: TAction;
+public
+  ActionRegx: string;
+  Action: TAction;
+  Action1: TActionNoParams;
 end;
 
 TValPos = class
@@ -39,19 +42,19 @@ private
   valPositions: TList;
 end;
 
- TWorld = class
- public
-   FSteps: TList;
-   FActions: TList;
-  private
-  procedure RegisterAction(strRegex: string; action: TAction);
- public
-   constructor Create();
-   destructor Destroy(); override;
-   procedure ExecuteStep(strToMatch, actionRegx: string; callback: TAction);
-   function FindStepMatches(strNameToMatch: string): TStepMatches;
-   class function Get(): TWorld;
- end;
+TWorld = class
+public
+  FSteps: TList;
+  FActions: TList;
+private
+  procedure RegisterAction(strRegex: string; action: TAction); overload;
+  procedure RegisterAction(strRegex: string; action: TActionNoParams); overload;
+public
+  constructor Create();
+  destructor Destroy(); override;
+  function FindStepMatches(strNameToMatch: string): TStepMatches;
+  class function Get(): TWorld;
+end;
 
  TStepDefinition = class
  protected
@@ -59,11 +62,12 @@ end;
    procedure CheckEquals(dLHS, dRHS: Integer); overload;
    procedure CheckEquals(dLHS, dRHS: String); overload;
    procedure RegisterGiven(strRegex: string; action: TAction);
- 	 procedure RegisterWhen(strRegex: string; action: TAction);
+ 	 procedure RegisterWhen(strRegex: string; action: TAction); overload;
+   procedure RegisterWhen(strRegex: string; action: TActionNoParams); overload;
    procedure RegisterThen(strRegex: string; action: TAction);
  public
    procedure RegisterSteps(); virtual;
-   procedure OnBeforeStartScenario(); virtual;
+   procedure SetUp(); virtual;
    procedure OnAfterEndScenario(); virtual;
    public constructor Scenario();
  end;
@@ -92,7 +96,7 @@ begin
    raise ECucumberTestException.Create('''' + dLHS + ''' = ''' + dRHS + '''');
 end;
 
-procedure TStepDefinition.OnBeforeStartScenario();
+procedure TStepDefinition.SetUp();
 begin
 end;
 
@@ -110,6 +114,11 @@ begin
   TWorld.Get().RegisterAction(strRegex, action);
 end;
 
+procedure TStepDefinition.RegisterWhen(strRegex: string; action: TActionNoParams);
+begin
+  TWorld.Get().RegisterAction(strRegex, action);
+end;
+
 procedure TStepDefinition.RegisterThen(strRegex: string; action: TAction);
 begin
   TWorld.Get().RegisterAction(strRegex, action);
@@ -122,7 +131,9 @@ end;
 
 constructor TStepDefinition.Scenario();
 begin
+  TWorld.Get().FSteps.Add(Self);
   RegisterSteps();
+  SetUp();
 end;
 
 constructor TStepMatches.Create();
@@ -158,8 +169,22 @@ begin
 end;
 
 destructor TWorld.Destroy();
+var iLoop: Integer;
 begin
+  iLoop := 0;
+  while(iLoop < FActions.Count) do
+  begin
+    TObject(FActions[iLoop]).Free;
+    iLoop := iLoop + 1;
+  end;
   FActions.Free();
+
+  iLoop := 0;
+  while(iLoop < FSteps.Count) do
+  begin
+    TObject(FSteps[iLoop]).Free;
+    iLoop := iLoop + 1;
+  end;
   FSteps.Free();
 end;
 
@@ -168,32 +193,6 @@ begin
   if(__World = nil) then
    __World := TWorld.Create();
   Result := __World;
-end;
-
-procedure TWorld.ExecuteStep(strToMatch, actionRegx: string; callback: TAction);
-var r: TRegExpr;
-  strList: TStringList;
-  i: Integer;
-begin
-  strList := TStringList.Create();
-  r :=TRegExpr.Create();
-  try
-    r.Expression := actionRegx;
-    if(r.Exec(strToMatch)) then
-    begin
-      i := 0;
-      while(i< r.SubExprMatchCount) do
-      begin
-        strList.Add(r.Match[i]);
-        i:= i + 1;
-      end;
-      if(Assigned(callback)) then
-        callback(strList);
-    end;
-  finally
-    strList.Free();
-    r.Free();
-  end;
 end;
 
 procedure TWorld.RegisterAction(strRegex: string; action: TAction);
@@ -205,13 +204,22 @@ begin
   FActions.Add(lookup);
 end;
 
+procedure TWorld.RegisterAction(strRegex: string; action: TActionNoParams);
+var lookup: TLookupAction;
+begin
+  lookup := TLookupAction.Create();
+  lookup.ActionRegx:= strRegex;
+  lookup.Action1:= action;
+  FActions.Add(lookup);
+end;
+
 function getCharPosition(text: String; bytePos: Integer): Integer;
 begin
-    Result := length( Copy(text, 0, bytePos) );
+  Result := length( Copy(text, 0, bytePos) );
 end;
 
 function TWorld.FindStepMatches(strNameToMatch: string): TStepMatches;
-  var iLoop: Integer;
+var iLoop: Integer;
     step: TAction;
     imatch: Integer;
     valPos: TValPos;
