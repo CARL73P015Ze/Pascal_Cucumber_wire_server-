@@ -121,7 +121,8 @@ end;
 procedure TConvertingCells.RegisterSteps();
 begin
   RegisterGiven('^I have the company configuration:$', @IAmLoggedInAsABuyer);
-  RegisterWhen('^I Click Send OnCall$', @IAmLoggedInAsABuyer);
+  RegisterWhen('^I Click Send$', @IAmLoggedInAsABuyer);
+  RegisterWhen('^Carl receives the message$', @IAmLoggedInAsABuyer);
 
 	RegisterGiven('^I am logged in as a buyer$', @IAmLoggedInAsABuyer);
 	RegisterWhen('^I view warranty options$', @IViewWarrantyOptions);

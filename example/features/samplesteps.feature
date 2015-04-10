@@ -29,8 +29,9 @@ Feature: Division
 	  | Gold     | $500  |
 	  | Silver   | $200  |
 
-	Scenario: Sending A Call To OnCall
+	Scenario: Sending An Item To Carl
 		Given I have the company configuration:
 			|CanSendToServer | Y            |
-			|ServerHostName  | hud01         |
-		When I Click Send OnCall
+			|ServerHostName  | xyz         |
+		When I Click Send
+		Then Carl receives the message
