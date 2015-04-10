@@ -9,16 +9,26 @@ uses
 
 type
 
-TCalculator = class(TStepDefinition)
+TCalculator = class
+private
+  FCurrentNumber: double;
+  FLastNumber: double;
+public
+  procedure EnterNumber(value: double);
+  procedure Divide();
+  function GetCurrentValue(): double;
+  constructor Create();
+end;
+
+TCalculatorSteps = class(TStepDefinition)
 private
   procedure IHaveEnteredIntoTheCalculator(const strList: TStringList);
-  procedure IPressDivide(const strList: TStringList);
+  procedure IPressDivide();
   procedure CalculationResult(const strList: TStringList);
 private
-  iCurrentNumber: double;
-  iLastNumber: double;
+  FCalculator: TCalculator;
 public
-  constructor Create();
+  procedure SetUp(); override;
   procedure RegisterSteps(); override;
 end;
 
@@ -28,38 +38,59 @@ private
   procedure IViewWarrantyOptions(const strList: TStringList);
   procedure IShouldSeeTheFollingOptions(const strList: TStringList);
 public
-  constructor Create();
   procedure RegisterSteps(); override;
 end;
 
 implementation
 
-procedure TCalculator.IHaveEnteredIntoTheCalculator(const strList: TStringList);
+constructor TCalculator.Create();
 begin
-  iLastNumber := iCurrentNumber;
-  iCurrentNumber := StrToFloat(strList[0]);
+  FCurrentNumber := 0;
+  FLastNumber:= 0;
 end;
 
-procedure TCalculator.IPressDivide(const strList: TStringList);
+procedure TCalculator.EnterNumber(value: double);
 begin
-  if(iCurrentNumber <> 0) then
-    iCurrentNumber := iLastNumber / iCurrentNumber;
+  FLastNumber:= FCurrentNumber;
+  FCurrentNumber := value;
 end;
 
-procedure TCalculator.CalculationResult(const strList: TStringList);
-var iLoop: Integer;
+procedure TCalculator.Divide();
 begin
-  iLoop := 0;
-  while(iLoop <strList.count) do
-  begin
-    WriteLn(strList[iLoop]);
-    iLoop := iLoop + 1;
-  end;
-
-  CheckEquals(StrToFloat(strList[0]), iCurrentNumber);
+  if(FCurrentNumber <> 0) then
+    FCurrentNumber := FLastNumber / FCurrentNumber
+  else
+    FCurrentNumber:= 0;
 end;
 
-procedure TCalculator.RegisterSteps();
+function TCalculator.GetCurrentValue(): double;
+begin
+  Result := FCurrentNumber;
+end;
+
+procedure TCalculatorSteps.SetUp();
+begin
+  FCalculator := TCalculator.Create();
+end;
+
+procedure TCalculatorSteps.IHaveEnteredIntoTheCalculator(const strList: TStringList);
+begin
+  FCalculator.EnterNumber(StrToFloat(strList[0]));
+end;
+
+procedure TCalculatorSteps.IPressDivide();
+begin
+  FCalculator.Divide();
+end;
+
+procedure TCalculatorSteps.CalculationResult(const strList: TStringList);
+var value: double;
+begin
+  value:= FCalculator.GetCurrentValue();
+  CheckEquals(StrToFloat(strList[0]), value);
+end;
+
+procedure TCalculatorSteps.RegisterSteps();
 begin
 	RegisterGiven('^I have entered (\d+) into the calculator$', @IHaveEnteredIntoTheCalculator);
 	RegisterWhen('^I press divide$', @IPressDivide);
@@ -87,11 +118,6 @@ begin
   end;
 end;
 
-constructor TConvertingCells.Create();
-begin
-
-end;
-
 procedure TConvertingCells.RegisterSteps();
 begin
   RegisterGiven('^I have the company configuration:$', @IAmLoggedInAsABuyer);
@@ -100,21 +126,15 @@ begin
 	RegisterGiven('^I am logged in as a buyer$', @IAmLoggedInAsABuyer);
 	RegisterWhen('^I view warranty options$', @IViewWarrantyOptions);
   RegisterThen('^I should see the following options:$', @IShouldSeeTheFollingOptions);
-
-
 end;
 
-constructor TCalculator.Create();
-begin
-  iCurrentNumber:= 0;
-  iLastNumber:= 0;
-end;
+
 
 
 
 initialization
 
 TConvertingCells.Scenario();
-TCalculator.Scenario();
+TCalculatorSteps.Scenario();
 end.
 
