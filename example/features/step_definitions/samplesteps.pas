@@ -22,9 +22,9 @@ end;
 
 TCalculatorSteps = class(TStepDefinition)
 private
-  procedure IHaveEnteredIntoTheCalculator(const strList: TStringList);
+  procedure IHaveEnteredIntoTheCalculator(const dNumber: Double);
   procedure IPressDivide();
-  procedure CalculationResult(const strList: TStringList);
+  procedure CalculationResult(const dNumber: Double);
 private
   FCalculator: TCalculator;
 public
@@ -34,12 +34,22 @@ end;
 
 TConvertingCells = class(TStepDefinition)
 private
-  procedure IAmLoggedInAsABuyer(const strList: TStringList);
-  procedure IViewWarrantyOptions(const strList: TStringList);
+  procedure IAmLoggedInAsABuyer();
+  procedure IViewWarrantyOptions();
   procedure IShouldSeeTheFollingOptions(const strList: TStringList);
 public
   procedure RegisterSteps(); override;
 end;
+
+TSendingAnItemToCarl = class(TStepDefinition)
+private
+  procedure IHaveTheCompanyConfiguration(const strList: TStringList);
+  procedure IClickSend();
+  procedure ReveivesTheMessage();
+public
+  procedure RegisterSteps(); override;
+end;
+
 
 implementation
 
@@ -73,9 +83,9 @@ begin
   FCalculator := TCalculator.Create();
 end;
 
-procedure TCalculatorSteps.IHaveEnteredIntoTheCalculator(const strList: TStringList);
+procedure TCalculatorSteps.IHaveEnteredIntoTheCalculator(const dNumber: Double);
 begin
-  FCalculator.EnterNumber(StrToFloat(strList[0]));
+  FCalculator.EnterNumber(dNumber);
 end;
 
 procedure TCalculatorSteps.IPressDivide();
@@ -83,11 +93,11 @@ begin
   FCalculator.Divide();
 end;
 
-procedure TCalculatorSteps.CalculationResult(const strList: TStringList);
+procedure TCalculatorSteps.CalculationResult(const dNumber: Double);
 var value: double;
 begin
   value:= FCalculator.GetCurrentValue();
-  CheckEquals(StrToFloat(strList[0]), value);
+  CheckEquals(dNumber, value);
 end;
 
 procedure TCalculatorSteps.RegisterSteps();
@@ -97,12 +107,12 @@ begin
   RegisterThen('^the result should be ([-+]?([0-9]*\.[0-9]+|[0-9]+)) on the screen$', @CalculationResult);
 end;
 
-procedure TConvertingCells.IAmLoggedInAsABuyer(const strList: TStringList);
+procedure TConvertingCells.IAmLoggedInAsABuyer();
 begin
 
 end;
 
-procedure TConvertingCells.IViewWarrantyOptions(const strList: TStringList);
+procedure TConvertingCells.IViewWarrantyOptions();
 begin
 
 end;
@@ -120,10 +130,6 @@ end;
 
 procedure TConvertingCells.RegisterSteps();
 begin
-  RegisterGiven('^I have the company configuration:$', @IAmLoggedInAsABuyer);
-  RegisterWhen('^I Click Send$', @IAmLoggedInAsABuyer);
-  RegisterWhen('^Carl receives the message$', @IAmLoggedInAsABuyer);
-
 	RegisterGiven('^I am logged in as a buyer$', @IAmLoggedInAsABuyer);
 	RegisterWhen('^I view warranty options$', @IViewWarrantyOptions);
   RegisterThen('^I should see the following options:$', @IShouldSeeTheFollingOptions);
@@ -132,10 +138,32 @@ end;
 
 
 
+procedure TSendingAnItemToCarl.IHaveTheCompanyConfiguration(const strList: TStringList);
+begin
+
+end;
+
+procedure TSendingAnItemToCarl.IClickSend();
+begin
+
+end;
+
+procedure TSendingAnItemToCarl.ReveivesTheMessage();
+begin
+
+end;
+
+procedure TSendingAnItemToCarl.RegisterSteps();
+begin
+  RegisterGiven('^I have the company configuration:$', @IHaveTheCompanyConfiguration);
+  RegisterWhen('^I Click Send$', @IClickSend);
+  RegisterWhen('^([a-zA-Z]+) receives the message$', @ReveivesTheMessage);
+end;
 
 initialization
 
 TConvertingCells.Scenario();
 TCalculatorSteps.Scenario();
+TSendingAnItemToCarl.Scenario();
 end.
 

@@ -80,8 +80,8 @@ function TProcessor.ProcessInvoke(request: TInvokeCommand): TResponse;
 var
    strArgsCommands: TArgsCommands;
    iCurrentInvoke: Integer;
-   action: TAction;
    lookup: TLookupAction;
+   args: TStringList;
 begin
   strArgsCommands := request.Args;
   iCurrentInvoke := 0;
@@ -89,11 +89,23 @@ begin
   begin
     try
       lookup := TLookupAction(TWorld.Get().FActions[StrToInt(request.StepId)]);
+      args:= strArgsCommands[iCurrentInvoke];
 
-      if(Assigned(lookup.Action)) then
-        lookup.Action(strArgsCommands[iCurrentInvoke])
-      else if(Assigned(lookup.Action)) then
-        lookup.Action1()
+      if(Assigned(lookup.ActionStrList)) then
+        lookup.ActionStrList(args)
+      else if(Assigned(lookup.ActionNoParams)) then
+        lookup.ActionNoParams()
+      else if(strArgsCommands[iCurrentInvoke].Count > 0) then
+      begin
+        if(Assigned(lookup.ActionI)) then
+          lookup.ActionI(StrToInt(args[0]))
+        else if(Assigned(lookup.ActionD)) then
+          lookup.ActionD(StrToFloat(args[0]))
+        else if(Assigned(lookup.ActionS)) then
+          lookup.ActionS(args[0])
+        else if(Assigned(lookup.ActionB)) then
+          lookup.ActionB(StrToBool(args[0]))
+      end
       else
         raise ECucumberTestException.Create('Unable to execute step');
 

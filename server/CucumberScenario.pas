@@ -12,14 +12,23 @@ type
  end;
 
 TActionNoParams = procedure() of object;
-TAction = procedure(const strList: TStringList) of object;
+TActionStrList = procedure(const strList: TStringList) of object;
+TActionI = procedure(const iVal: Integer) of object;
+TActionD = procedure(const iVal: double) of object;
+TActionS = procedure(const iVal: string) of object;
+TActionB = procedure(const iVal: boolean) of object;
 
 
 TLookupAction = class
 public
   ActionRegx: string;
-  Action: TAction;
-  Action1: TActionNoParams;
+  ActionNoParams: TActionNoParams;
+
+  ActionStrList: TActionStrList;
+  ActionI: TActionI;
+  ActionD: TActionD;
+  ActionS: TActionS;
+  ActionB: TActionB;
 end;
 
 TValPos = class
@@ -47,8 +56,12 @@ public
   FSteps: TList;
   FActions: TList;
 private
-  procedure RegisterAction(strRegex: string; action: TAction); overload;
   procedure RegisterAction(strRegex: string; action: TActionNoParams); overload;
+  procedure RegisterAction(strRegex: string; action: TActionStrList); overload;
+  procedure RegisterAction(strRegex: string; action: TActionI); overload;
+  procedure RegisterAction(strRegex: string; action: TActionD); overload;
+  procedure RegisterAction(strRegex: string; action: TActionS); overload;
+  procedure RegisterAction(strRegex: string; action: TActionB); overload;
 public
   constructor Create();
   destructor Destroy(); override;
@@ -61,10 +74,30 @@ end;
    procedure CheckEquals(dLHS, dRHS: double); overload;
    procedure CheckEquals(dLHS, dRHS: Integer); overload;
    procedure CheckEquals(dLHS, dRHS: String); overload;
-   procedure RegisterGiven(strRegex: string; action: TAction);
- 	 procedure RegisterWhen(strRegex: string; action: TAction); overload;
+
+   procedure RegisterGiven(strRegex: string; action: TActionStrList); overload;
+   procedure RegisterGiven(strRegex: string; action: TActionNoParams); overload;
+   procedure RegisterGiven(strRegex: string; action: TActionI); overload;
+   procedure RegisterGiven(strRegex: string; action: TActionD); overload;
+   procedure RegisterGiven(strRegex: string; action: TActionS); overload;
+   procedure RegisterGiven(strRegex: string; action: TActionB); overload;
+
+ 	 procedure RegisterWhen(strRegex: string; action: TActionStrList); overload;
    procedure RegisterWhen(strRegex: string; action: TActionNoParams); overload;
-   procedure RegisterThen(strRegex: string; action: TAction);
+   procedure RegisterWhen(strRegex: string; action: TActionI); overload;
+   procedure RegisterWhen(strRegex: string; action: TActionD); overload;
+   procedure RegisterWhen(strRegex: string; action: TActionS); overload;
+   procedure RegisterWhen(strRegex: string; action: TActionB); overload;
+
+
+   procedure RegisterThen(strRegex: string; action: TActionStrList); overload;
+   procedure RegisterThen(strRegex: string; action: TActionNoParams); overload;
+   procedure RegisterThen(strRegex: string; action: TActionI); overload;
+   procedure RegisterThen(strRegex: string; action: TActionD); overload;
+   procedure RegisterThen(strRegex: string; action: TActionS); overload;
+   procedure RegisterThen(strRegex: string; action: TActionB); overload;
+
+
  public
    procedure RegisterSteps(); virtual;
    procedure SetUp(); virtual;
@@ -104,12 +137,37 @@ procedure TStepDefinition.OnAfterEndScenario();
 begin
 end;
 
-procedure TStepDefinition.RegisterGiven(strRegex: string; action: TAction);
+procedure TStepDefinition.RegisterGiven(strRegex: string; action: TActionStrList);
 begin
   TWorld.Get().RegisterAction(strRegex, action);
 end;
 
-procedure TStepDefinition.RegisterWhen(strRegex: string; action: TAction);
+procedure TStepDefinition.RegisterGiven(strRegex: string; action: TActionNoParams);
+begin
+  TWorld.Get().RegisterAction(strRegex, action);
+end;
+
+procedure TStepDefinition.RegisterGiven(strRegex: string; action: TActionI);
+begin
+  TWorld.Get().RegisterAction(strRegex, action);
+end;
+
+procedure TStepDefinition.RegisterGiven(strRegex: string; action: TActionD);
+begin
+  TWorld.Get().RegisterAction(strRegex, action);
+end;
+
+procedure TStepDefinition.RegisterGiven(strRegex: string; action: TActionS);
+begin
+  TWorld.Get().RegisterAction(strRegex, action);
+end;
+
+procedure TStepDefinition.RegisterGiven(strRegex: string; action: TActionB);
+begin
+  TWorld.Get().RegisterAction(strRegex, action);
+end;
+
+procedure TStepDefinition.RegisterWhen(strRegex: string; action: TActionStrList);
 begin
   TWorld.Get().RegisterAction(strRegex, action);
 end;
@@ -119,7 +177,52 @@ begin
   TWorld.Get().RegisterAction(strRegex, action);
 end;
 
-procedure TStepDefinition.RegisterThen(strRegex: string; action: TAction);
+procedure TStepDefinition.RegisterWhen(strRegex: string; action: TActionI);
+begin
+  TWorld.Get().RegisterAction(strRegex, action);
+end;
+
+procedure TStepDefinition.RegisterWhen(strRegex: string; action: TActionD);
+begin
+  TWorld.Get().RegisterAction(strRegex, action);
+end;
+
+procedure TStepDefinition.RegisterWhen(strRegex: string; action: TActionS);
+begin
+  TWorld.Get().RegisterAction(strRegex, action);
+end;
+
+procedure TStepDefinition.RegisterWhen(strRegex: string; action: TActionB);
+begin
+  TWorld.Get().RegisterAction(strRegex, action);
+end;
+
+procedure TStepDefinition.RegisterThen(strRegex: string; action: TActionStrList);
+begin
+  TWorld.Get().RegisterAction(strRegex, action);
+end;
+
+procedure TStepDefinition.RegisterThen(strRegex: string; action: TActionNoParams);
+begin
+  TWorld.Get().RegisterAction(strRegex, action);
+end;
+
+procedure TStepDefinition.RegisterThen(strRegex: string; action: TActionI);
+begin
+  TWorld.Get().RegisterAction(strRegex, action);
+end;
+
+procedure TStepDefinition.RegisterThen(strRegex: string; action: TActionD);
+begin
+  TWorld.Get().RegisterAction(strRegex, action);
+end;
+
+procedure TStepDefinition.RegisterThen(strRegex: string; action: TActionS);
+begin
+  TWorld.Get().RegisterAction(strRegex, action);
+end;
+
+procedure TStepDefinition.RegisterThen(strRegex: string; action: TActionB);
 begin
   TWorld.Get().RegisterAction(strRegex, action);
 end;
@@ -131,7 +234,7 @@ end;
 
 constructor TStepDefinition.Scenario();
 begin
-  TWorld.Get().FSteps.Add(Self);
+  TWorld.Get().FSteps.Add(Self); // so we can free it later
   RegisterSteps();
   SetUp();
 end;
@@ -195,21 +298,57 @@ begin
   Result := __World;
 end;
 
-procedure TWorld.RegisterAction(strRegex: string; action: TAction);
-var lookup: TLookupAction;
-begin
-  lookup := TLookupAction.Create();
-  lookup.ActionRegx:= strRegex;
-  lookup.Action:= action;
-  FActions.Add(lookup);
-end;
-
 procedure TWorld.RegisterAction(strRegex: string; action: TActionNoParams);
 var lookup: TLookupAction;
 begin
   lookup := TLookupAction.Create();
   lookup.ActionRegx:= strRegex;
-  lookup.Action1:= action;
+  lookup.ActionNoParams:= action;
+  FActions.Add(lookup);
+end;
+
+procedure TWorld.RegisterAction(strRegex: string; action: TActionStrList);
+var lookup: TLookupAction;
+begin
+  lookup := TLookupAction.Create();
+  lookup.ActionRegx:= strRegex;
+  lookup.ActionStrList:= action;
+  FActions.Add(lookup);
+end;
+
+procedure TWorld.RegisterAction(strRegex: string; action: TActionI);
+var lookup: TLookupAction;
+begin
+  lookup := TLookupAction.Create();
+  lookup.ActionRegx:= strRegex;
+  lookup.ActionI:= action;
+  FActions.Add(lookup);
+end;
+
+procedure TWorld.RegisterAction(strRegex: string; action: TActionD);
+var lookup: TLookupAction;
+begin
+  lookup := TLookupAction.Create();
+  lookup.ActionRegx:= strRegex;
+  lookup.ActionD:= action;
+  FActions.Add(lookup);
+end;
+
+procedure TWorld.RegisterAction(strRegex: string; action: TActionS);
+var lookup: TLookupAction;
+begin
+  lookup := TLookupAction.Create();
+  lookup.ActionRegx:= strRegex;
+  lookup.ActionS:= action;
+  FActions.Add(lookup);
+end;
+
+procedure TWorld.RegisterAction(strRegex: string; action: TActionB);
+var lookup: TLookupAction;
+begin
+  lookup := TLookupAction.Create();
+  lookup.ActionRegx:= strRegex;
+  lookup.ActionB:= action;
   FActions.Add(lookup);
 end;
 
@@ -220,7 +359,6 @@ end;
 
 function TWorld.FindStepMatches(strNameToMatch: string): TStepMatches;
 var iLoop: Integer;
-    step: TAction;
     imatch: Integer;
     valPos: TValPos;
     PrevPos : PtrInt;
@@ -266,6 +404,12 @@ begin
   end;
 end;
 
+
+finalization
+
+// free any registered tests.
+if(__World <> nil) then
+ __World.Free();
 
 end.
 
