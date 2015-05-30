@@ -25,6 +25,7 @@ var
   request: TCommand;
   response: TResponse;
   aProcessor: TProcessor;
+  strBuffer: String;
 begin
   timeout := 120000;
   aProcessor := TProcessor.Create();
@@ -32,33 +33,42 @@ begin
   while(s <> '') do
   begin
     WriteLn('IN: ' + s);
-    request := TCommandFactory.ParseFromJson(s);
-    response := aProcessor.Process(request);
-    if(response <> nil) then
-    begin
-      WriteLn('OUT: ' + response.GetType() + ' ' + response.ToJsonString());
-      ASocket.SendString(response.ToJsonString() + LF);
+    try
+      request := nil;
+      response := nil;
+      request := TCommandFactory.ParseFromJson(s);
+
+      response := aProcessor.Process(request);
+      if(response <> nil) then
+      begin
+        strBuffer := response.ToJsonString() + LF;
+        WriteLn('OUT: ' + response.GetType() + ' ' + strBuffer);
+        ASocket.SendString(strBuffer);
+      end;
+    finally
+      request.Free();
       response.Free();
     end;
-    request.Free();
     s := ASocket.RecvTerminated(Timeout, LF);
   end;
+  aProcessor.Free();
   WriteLn('<' + s);
 end;
 
-procedure StartServer();
-
+procedure StartTheServer(iPort: Integer);
 var
   ListenerSocket, ConnectionSocket: TTCPBlockSocket;
+  bRun: Boolean;
 begin
   ListenerSocket := TTCPBlockSocket.Create;
   ConnectionSocket := TTCPBlockSocket.Create;
 
   ListenerSocket.CreateSocket;
   ListenerSocket.setLinger(true,10);
-  ListenerSocket.bind('0.0.0.0','3901');
+  ListenerSocket.bind('0.0.0.0', IntToStr(iPort));
   ListenerSocket.listen;
 
+  bRun := true;
   repeat
     if ListenerSocket.canread(1000) then
     begin
@@ -66,11 +76,33 @@ begin
       WriteLn('Attending Connection. Error code (0=Success): ', ConnectionSocket.lasterror);
       AttendConnection(ConnectionSocket);
       ConnectionSocket.CloseSocket;
+      bRun := false;
     end;
-  until false;
+
+  until bRun = false;
 
   ListenerSocket.Free;
   ConnectionSocket.Free;
+end;
+
+procedure StartServer();
+var
+  iPort: Integer;
+begin
+  iPort := 0;
+  if(Paramcount > 0) then
+    iPort := StrToIntDef(ParamStr(1), 0)
+  else 
+    iPort := 3901;
+
+  if((iPort > 0) and (iPort < 65535)) then
+  begin
+    StartTheServer(iPort);
+  end
+  else
+  begin
+    WriteLn('Invalid port');
+  end;
 end;
 
 
