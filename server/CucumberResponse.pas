@@ -120,6 +120,7 @@ begin
 
   jsonData := TJSONArray.Create(['success', param]);
   Result := jsonData.FormatJSON([foSingleLineArray, foSingleLineObject], DefaultIndentSize);
+  jsonData.Free();
 end;
 
 function TStepMatchesResponse.GetType(): string;
@@ -142,6 +143,7 @@ var jsonData: TJSONArray;
 begin
  jsonData := TJSONArray.Create(['success']);
  Result := jsonData.FormatJSON([foSingleLineArray, foSingleLineObject], DefaultIndentSize);
+ jsonData.Free();
 end;
 
 function TSuccessResponse.GetType(): string;
@@ -174,6 +176,7 @@ var jsonData: TJSONArray;
 begin
   jsonData := TJSONArray.Create(['fail', TJSONObject.Create(['message', FMessage])]);
   Result := jsonData.FormatJSON([foSingleLineArray, foSingleLineObject], DefaultIndentSize);
+  jsonData.Free();
 end;
 
 constructor TPendingResponse.Create(strMessage: string);

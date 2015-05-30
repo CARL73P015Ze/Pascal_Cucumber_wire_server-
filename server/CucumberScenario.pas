@@ -245,7 +245,14 @@ begin
 end;
 
 destructor TStepMatches.Destroy();
+var i: Integer;
 begin
+  i:= 0;
+  while(i < valPositions.count) do
+  begin
+    TValPos(valPositions[i]).Free();
+    i := i + 1;
+  end;
   valPositions.Free();
 end;
 
@@ -400,6 +407,7 @@ begin
       end;
       iLoop := FActions.Count;
     end;
+    regex.Free();
     iLoop := iLoop + 1;
   end;
 end;

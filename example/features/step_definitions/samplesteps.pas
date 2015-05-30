@@ -30,6 +30,7 @@ private
 public
   procedure SetUp(); override;
   procedure RegisterSteps(); override;
+  destructor Destroy(); override;
 end;
 
 TConvertingCells = class(TStepDefinition)
@@ -81,6 +82,12 @@ end;
 procedure TCalculatorSteps.SetUp();
 begin
   FCalculator := TCalculator.Create();
+end;
+
+destructor TCalculatorSteps.Destroy();
+begin
+  FCalculator.Free;
+  inherited;
 end;
 
 procedure TCalculatorSteps.IHaveEnteredIntoTheCalculator(const dNumber: Double);

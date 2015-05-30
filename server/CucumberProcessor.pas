@@ -78,24 +78,23 @@ end;
 
 function TProcessor.ProcessInvoke(request: TInvokeCommand): TResponse;
 var
-   strArgsCommands: TArgsCommands;
    iCurrentInvoke: Integer;
    lookup: TLookupAction;
    args: TStringList;
 begin
-  strArgsCommands := request.Args;
   iCurrentInvoke := 0;
-  while(iCurrentInvoke < strArgsCommands.Count) do
+  try
   begin
-    try
+    while(iCurrentInvoke < request.GetArgCount()) do
+    begin
       lookup := TLookupAction(TWorld.Get().FActions[StrToInt(request.StepId)]);
-      args:= strArgsCommands[iCurrentInvoke];
+      args:= request.GetArgStrings(iCurrentInvoke);
 
       if(Assigned(lookup.ActionStrList)) then
         lookup.ActionStrList(args)
       else if(Assigned(lookup.ActionNoParams)) then
         lookup.ActionNoParams()
-      else if(strArgsCommands[iCurrentInvoke].Count > 0) then
+      else if(request.GetArgCount() > 0) then
       begin
         if(Assigned(lookup.ActionI)) then
           lookup.ActionI(StrToInt(args[0]))
@@ -108,15 +107,15 @@ begin
       end
       else
         raise ECucumberTestException.Create('Unable to execute step');
-
-      Result := TSuccessResponse.Create();
-      Except on E: ECucumberTestException do
-      begin
-        Result := TFailResponse.Create(E.Message);
-      end
+      iCurrentInvoke := iCurrentInvoke + 1;
     end;
-    iCurrentInvoke := iCurrentInvoke + 1;
+    Result := TSuccessResponse.Create();
+  end
+  Except on E: ECucumberTestException do
+  begin
+    Result := TFailResponse.Create(E.Message);
   end;
+end;
 end;
 
 end.

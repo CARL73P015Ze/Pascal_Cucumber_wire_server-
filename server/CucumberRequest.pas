@@ -5,7 +5,7 @@ unit CucumberRequest;
 interface
 
 uses
-  Classes, SysUtils, fpjson, jsonparser, fgl, strutils;
+  Classes, SysUtils, fpjson, jsonparser, strutils;
 
 type
   MultilineTypes = (mtNone, mtTable, mtString);
@@ -25,12 +25,16 @@ type
     NameToMatch: string;
   end;
 
-  TArgsCommands = specialize TFPGList<TStringList>;
-
   TInvokeCommand = class(TCommand)
+  private
+    Args: TList;
   public
     StepId: string;
-    Args: TArgsCommands; // should be an array
+  public
+    constructor Create();
+    destructor Destroy(); override;
+    function GetArgCount(): Integer;
+    function GetArgStrings(iPos: Integer): TStringList;
   end;
 
   TSnippetCommand = class(TCommand)
@@ -76,7 +80,6 @@ var iIndex, iLoop: Integer;
   strString: String;
 begin
   Result := TInvokeCommand.Create();
-  Result.Args := TArgsCommands.Create();
 
   iIndex := TJSONObject(Data).IndexOfName('args', False);
   if (iIndex >= 0) then
@@ -150,39 +153,82 @@ begin
 
   parser := TJSONParser.Create(json);
   jsonData := parser.Parse();
+  parser.Free();
+
   if Assigned(jsonData) then
   begin
-    if (jsonData.JSONType = jtArray) then
-    begin
-	    if(TJSONArray(jsonData).Count > 0) then
-	    begin
-		    strRequestName := TJSONArray(jsonData).Items[0].AsString;
+    try
+      if (jsonData.JSONType = jtArray) then
+      begin
+        if(TJSONArray(jsonData).Count > 0) then
+        begin
+          strRequestName := TJSONArray(jsonData).Items[0].AsString;
 
-		    if (strRequestName = 'begin_scenario') then
-		    begin
-		      Result := TBeginScenarioCommand.Create();
-		    end
-		    else if (strRequestName = 'step_matches') then
-		    begin
-		      Result := TCommandFactory.CreateStepMatchesCommand(TJSONArray(jsonData).Items[1]);
-		    end
-		    else if (strRequestName = 'invoke') then
-		    begin
-		      Result := TCommandFactory.CreateInvokeCommand(TJSONArray(jsonData).Items[1]);
-		    end
-		    else if (strRequestName = 'end_scenario') then
-		    begin
-		      Result := TEndScenarioCommand.Create();
-		    end
-		    else if (strRequestName = 'snippet_text') then
-		    begin
-		      Result := TCommandFactory.CreateSnippetCommand(TJSONArray(jsonData).Items[1]);
-		    end
-		    else
-          raise Exception.Create('OH DEAR!!!');
-	      end
-	  end;
+          if (strRequestName = 'begin_scenario') then
+          begin
+            Result := TBeginScenarioCommand.Create();
+          end
+          else if (strRequestName = 'step_matches') then
+          begin
+            Result := TCommandFactory.CreateStepMatchesCommand(TJSONArray(jsonData).Items[1]);
+          end
+          else if (strRequestName = 'invoke') then
+          begin
+            Result := TCommandFactory.CreateInvokeCommand(TJSONArray(jsonData).Items[1]);
+          end
+          else if (strRequestName = 'end_scenario') then
+          begin
+            Result := TEndScenarioCommand.Create();
+          end
+          else if (strRequestName = 'snippet_text') then
+          begin
+            Result := TCommandFactory.CreateSnippetCommand(TJSONArray(jsonData).Items[1]);
+          end
+          else
+            raise Exception.Create('OH DEAR!!!');
+          end
+      end;
+    finally
+      jsonData.Free();
+    end
   end;
+end;
+
+constructor TInvokeCommand.Create();
+begin
+  Args := TList.Create();
+end;
+
+
+destructor TInvokeCommand.Destroy();
+var i: Integer;
+    j: Integer;
+  innerList: TStringList;
+begin
+  i:= 0;
+  while(i < Args.Count) do
+  begin
+    innerList := TStringList(Args[i]);
+    j:= 0;
+    while(j < innerList.Count) do
+    begin
+      innerList.Delete(j);
+      j := j + 1;
+    end;
+    innerList.Free();
+    i := i + 1;
+  end;
+  Args.Free();
+end;
+
+function TInvokeCommand.GetArgCount(): Integer;
+begin
+  Result := Args.Count;
+end;
+
+function TInvokeCommand.GetArgStrings(iPos: Integer): TStringList;
+begin
+  Result := TStringList(Args[iPos]);
 end;
 
 end.
