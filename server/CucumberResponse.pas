@@ -100,7 +100,6 @@ end;
 
 function TStepMatchesResponse.ToJsonString(): string;
 var jsonData: TJSONArray;
-  matches: TJSONObject;
   args: TJSONArray;
   iArg: Integer;
   param: TJSONArray;

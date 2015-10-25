@@ -150,7 +150,7 @@ end;
 
 procedure TStepDefinition.RegisterGiven(strRegex: string; action: TActionNoParams; strFileName: string; iLineNum:String);
 begin
-  TWorld.Get().RegisterAction(strRegex, action, 'TODO', 0);
+  TWorld.Get().RegisterAction(strRegex, action, strFileName, StrToInt(iLineNum));
 end;
 
 procedure TStepDefinition.RegisterGiven(strRegex: string; action: TActionI; strFileName: string; iLineNum:String);
