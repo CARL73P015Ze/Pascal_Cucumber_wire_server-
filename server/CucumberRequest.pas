@@ -5,7 +5,7 @@ unit CucumberRequest;
 interface
 
 uses
-  Classes, SysUtils, fpjson, jsonparser, strutils;
+  Classes, SysUtils, fpjson, jsonparser;
 
 type
   MultilineTypes = (mtNone, mtTable, mtString);
@@ -56,18 +56,19 @@ type
 implementation
 uses RegExpr;
 
-// hmm, do i need to port this??
+// TODO: FIXME hmm, do i need to port this??
 class function TCommandFactory.CreateSnippetCommand(Data: TJSONData): TSnippetCommand;
 begin
   Result := TSnippetCommand.Create();
   Result.StepKeyword := '';
   Result.StepName := '';
-
-  if ('' = 'Cucumber::Ast::Table') then
+// TODO: FIXME
+{
+  if ('' = 'Cucumber::Ast::Table') then   // TODO: FIXME
     Result.Multiline := mtTable
-  else if ('' = 'Cucumber::Ast::PyString') then
+  else if ('' = 'Cucumber::Ast::PyString') then   // TODO: FIXME
     Result.Multiline := mtString
-  else
+  else}
     Result.Multiline := mtNone;
 end;
 
