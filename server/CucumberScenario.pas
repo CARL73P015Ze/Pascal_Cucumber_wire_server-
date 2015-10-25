@@ -47,6 +47,8 @@ public
 public
   Id: string;
   regex: string;
+  lineNo: Integer;
+  fileName: string;
 private
   valPositions: TList;
 end;
@@ -242,6 +244,10 @@ end;
 constructor TStepMatches.Create();
 begin
   valPositions := TList.Create();
+  lineNo:= 0;
+  fileName:= 'Unkown';
+  Id:= '';
+  regex:= '';
 end;
 
 destructor TStepMatches.Destroy();
