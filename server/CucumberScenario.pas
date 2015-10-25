@@ -29,6 +29,10 @@ public
   ActionD: TActionD;
   ActionS: TActionS;
   ActionB: TActionB;
+  lineNo: Integer;
+  fileName: string;
+public
+  constructor Create(strRegEx, fname: String; iLineNo: Integer);
 end;
 
 TValPos = class
@@ -58,12 +62,12 @@ public
   FSteps: TList;
   FActions: TList;
 private
-  procedure RegisterAction(strRegex: string; action: TActionNoParams); overload;
-  procedure RegisterAction(strRegex: string; action: TActionStrList); overload;
-  procedure RegisterAction(strRegex: string; action: TActionI); overload;
-  procedure RegisterAction(strRegex: string; action: TActionD); overload;
-  procedure RegisterAction(strRegex: string; action: TActionS); overload;
-  procedure RegisterAction(strRegex: string; action: TActionB); overload;
+  procedure RegisterAction(strRegex: string; action: TActionNoParams; strFileName: string; iLineNum:Integer); overload;
+  procedure RegisterAction(strRegex: string; action: TActionStrList; strFileName: string; iLineNum:Integer); overload;
+  procedure RegisterAction(strRegex: string; action: TActionI; strFileName: string; iLineNum:Integer); overload;
+  procedure RegisterAction(strRegex: string; action: TActionD; strFileName: string; iLineNum:Integer); overload;
+  procedure RegisterAction(strRegex: string; action: TActionS; strFileName: string; iLineNum:Integer); overload;
+  procedure RegisterAction(strRegex: string; action: TActionB; strFileName: string; iLineNum:Integer); overload;
 public
   constructor Create();
   destructor Destroy(); override;
@@ -77,27 +81,27 @@ end;
    procedure CheckEquals(dLHS, dRHS: Integer); overload;
    procedure CheckEquals(dLHS, dRHS: String); overload;
 
-   procedure RegisterGiven(strRegex: string; action: TActionStrList); overload;
-   procedure RegisterGiven(strRegex: string; action: TActionNoParams); overload;
-   procedure RegisterGiven(strRegex: string; action: TActionI); overload;
-   procedure RegisterGiven(strRegex: string; action: TActionD); overload;
-   procedure RegisterGiven(strRegex: string; action: TActionS); overload;
-   procedure RegisterGiven(strRegex: string; action: TActionB); overload;
+   procedure RegisterGiven(strRegex: string; action: TActionStrList; strFileName: string; iLineNum:String); overload;
+   procedure RegisterGiven(strRegex: string; action: TActionNoParams; strFileName: string; iLineNum:String); overload;
+   procedure RegisterGiven(strRegex: string; action: TActionI; strFileName: string; iLineNum:String); overload;
+   procedure RegisterGiven(strRegex: string; action: TActionD; strFileName: string; iLineNum:String); overload;
+   procedure RegisterGiven(strRegex: string; action: TActionS; strFileName: string; iLineNum:String); overload;
+   procedure RegisterGiven(strRegex: string; action: TActionB; strFileName: string; iLineNum:String); overload;
 
- 	 procedure RegisterWhen(strRegex: string; action: TActionStrList); overload;
-   procedure RegisterWhen(strRegex: string; action: TActionNoParams); overload;
-   procedure RegisterWhen(strRegex: string; action: TActionI); overload;
-   procedure RegisterWhen(strRegex: string; action: TActionD); overload;
-   procedure RegisterWhen(strRegex: string; action: TActionS); overload;
-   procedure RegisterWhen(strRegex: string; action: TActionB); overload;
+   procedure RegisterWhen(strRegex: string; action: TActionStrList; strFileName: string; iLineNum:String); overload;
+   procedure RegisterWhen(strRegex: string; action: TActionNoParams; strFileName: string; iLineNum:String); overload;
+   procedure RegisterWhen(strRegex: string; action: TActionI; strFileName: string; iLineNum:String); overload;
+   procedure RegisterWhen(strRegex: string; action: TActionD; strFileName: string; iLineNum:String); overload;
+   procedure RegisterWhen(strRegex: string; action: TActionS; strFileName: string; iLineNum:String); overload;
+   procedure RegisterWhen(strRegex: string; action: TActionB; strFileName: string; iLineNum:String); overload;
 
 
-   procedure RegisterThen(strRegex: string; action: TActionStrList); overload;
-   procedure RegisterThen(strRegex: string; action: TActionNoParams); overload;
-   procedure RegisterThen(strRegex: string; action: TActionI); overload;
-   procedure RegisterThen(strRegex: string; action: TActionD); overload;
-   procedure RegisterThen(strRegex: string; action: TActionS); overload;
-   procedure RegisterThen(strRegex: string; action: TActionB); overload;
+   procedure RegisterThen(strRegex: string; action: TActionStrList; strFileName: string; iLineNum:String); overload;
+   procedure RegisterThen(strRegex: string; action: TActionNoParams; strFileName: string; iLineNum:String); overload;
+   procedure RegisterThen(strRegex: string; action: TActionI; strFileName: string; iLineNum:String); overload;
+   procedure RegisterThen(strRegex: string; action: TActionD; strFileName: string; iLineNum:String); overload;
+   procedure RegisterThen(strRegex: string; action: TActionS; strFileName: string; iLineNum:String); overload;
+   procedure RegisterThen(strRegex: string; action: TActionB; strFileName: string; iLineNum:String); overload;
 
 
  public
@@ -139,94 +143,94 @@ procedure TStepDefinition.OnAfterEndScenario();
 begin
 end;
 
-procedure TStepDefinition.RegisterGiven(strRegex: string; action: TActionStrList);
+procedure TStepDefinition.RegisterGiven(strRegex: string; action: TActionStrList; strFileName: string; iLineNum:String);
 begin
-  TWorld.Get().RegisterAction(strRegex, action);
+  TWorld.Get().RegisterAction(strRegex, action, strFileName, StrToInt(iLineNum));
 end;
 
-procedure TStepDefinition.RegisterGiven(strRegex: string; action: TActionNoParams);
+procedure TStepDefinition.RegisterGiven(strRegex: string; action: TActionNoParams; strFileName: string; iLineNum:String);
 begin
-  TWorld.Get().RegisterAction(strRegex, action);
+  TWorld.Get().RegisterAction(strRegex, action, 'TODO', 0);
 end;
 
-procedure TStepDefinition.RegisterGiven(strRegex: string; action: TActionI);
+procedure TStepDefinition.RegisterGiven(strRegex: string; action: TActionI; strFileName: string; iLineNum:String);
 begin
-  TWorld.Get().RegisterAction(strRegex, action);
+  TWorld.Get().RegisterAction(strRegex, action, strFileName, StrToInt(iLineNum));
 end;
 
-procedure TStepDefinition.RegisterGiven(strRegex: string; action: TActionD);
+procedure TStepDefinition.RegisterGiven(strRegex: string; action: TActionD; strFileName: string; iLineNum:String);
 begin
-  TWorld.Get().RegisterAction(strRegex, action);
+  TWorld.Get().RegisterAction(strRegex, action, strFileName, StrToInt(iLineNum));
 end;
 
-procedure TStepDefinition.RegisterGiven(strRegex: string; action: TActionS);
+procedure TStepDefinition.RegisterGiven(strRegex: string; action: TActionS; strFileName: string; iLineNum:String);
 begin
-  TWorld.Get().RegisterAction(strRegex, action);
+  TWorld.Get().RegisterAction(strRegex, action, strFileName, StrToInt(iLineNum));
 end;
 
-procedure TStepDefinition.RegisterGiven(strRegex: string; action: TActionB);
+procedure TStepDefinition.RegisterGiven(strRegex: string; action: TActionB; strFileName: string; iLineNum:String);
 begin
-  TWorld.Get().RegisterAction(strRegex, action);
+  TWorld.Get().RegisterAction(strRegex, action, strFileName, StrToInt(iLineNum));
 end;
 
-procedure TStepDefinition.RegisterWhen(strRegex: string; action: TActionStrList);
+procedure TStepDefinition.RegisterWhen(strRegex: string; action: TActionStrList; strFileName: string; iLineNum:String);
 begin
-  TWorld.Get().RegisterAction(strRegex, action);
+  TWorld.Get().RegisterAction(strRegex, action, strFileName, StrToInt(iLineNum));
 end;
 
-procedure TStepDefinition.RegisterWhen(strRegex: string; action: TActionNoParams);
+procedure TStepDefinition.RegisterWhen(strRegex: string; action: TActionNoParams; strFileName: string; iLineNum:String);
 begin
-  TWorld.Get().RegisterAction(strRegex, action);
+  TWorld.Get().RegisterAction(strRegex, action, strFileName, StrToInt(iLineNum));
 end;
 
-procedure TStepDefinition.RegisterWhen(strRegex: string; action: TActionI);
+procedure TStepDefinition.RegisterWhen(strRegex: string; action: TActionI; strFileName: string; iLineNum:String);
 begin
-  TWorld.Get().RegisterAction(strRegex, action);
+  TWorld.Get().RegisterAction(strRegex, action, strFileName, StrToInt(iLineNum));
 end;
 
-procedure TStepDefinition.RegisterWhen(strRegex: string; action: TActionD);
+procedure TStepDefinition.RegisterWhen(strRegex: string; action: TActionD; strFileName: string; iLineNum:String);
 begin
-  TWorld.Get().RegisterAction(strRegex, action);
+  TWorld.Get().RegisterAction(strRegex, action, strFileName, StrToInt(iLineNum));
 end;
 
-procedure TStepDefinition.RegisterWhen(strRegex: string; action: TActionS);
+procedure TStepDefinition.RegisterWhen(strRegex: string; action: TActionS; strFileName: string; iLineNum:String);
 begin
-  TWorld.Get().RegisterAction(strRegex, action);
+  TWorld.Get().RegisterAction(strRegex, action, strFileName, StrToInt(iLineNum));
 end;
 
-procedure TStepDefinition.RegisterWhen(strRegex: string; action: TActionB);
+procedure TStepDefinition.RegisterWhen(strRegex: string; action: TActionB; strFileName: string; iLineNum:String);
 begin
-  TWorld.Get().RegisterAction(strRegex, action);
+  TWorld.Get().RegisterAction(strRegex, action, strFileName, StrToInt(iLineNum));
 end;
 
-procedure TStepDefinition.RegisterThen(strRegex: string; action: TActionStrList);
+procedure TStepDefinition.RegisterThen(strRegex: string; action: TActionStrList; strFileName: string; iLineNum:String);
 begin
-  TWorld.Get().RegisterAction(strRegex, action);
+  TWorld.Get().RegisterAction(strRegex, action, strFileName, StrToInt(iLineNum));
 end;
 
-procedure TStepDefinition.RegisterThen(strRegex: string; action: TActionNoParams);
+procedure TStepDefinition.RegisterThen(strRegex: string; action: TActionNoParams; strFileName: string; iLineNum:String);
 begin
-  TWorld.Get().RegisterAction(strRegex, action);
+  TWorld.Get().RegisterAction(strRegex, action, strFileName, StrToInt(iLineNum));
 end;
 
-procedure TStepDefinition.RegisterThen(strRegex: string; action: TActionI);
+procedure TStepDefinition.RegisterThen(strRegex: string; action: TActionI; strFileName: string; iLineNum:String);
 begin
-  TWorld.Get().RegisterAction(strRegex, action);
+  TWorld.Get().RegisterAction(strRegex, action, strFileName, StrToInt(iLineNum));
 end;
 
-procedure TStepDefinition.RegisterThen(strRegex: string; action: TActionD);
+procedure TStepDefinition.RegisterThen(strRegex: string; action: TActionD; strFileName: string; iLineNum:String);
 begin
-  TWorld.Get().RegisterAction(strRegex, action);
+  TWorld.Get().RegisterAction(strRegex, action, strFileName, StrToInt(iLineNum));
 end;
 
-procedure TStepDefinition.RegisterThen(strRegex: string; action: TActionS);
+procedure TStepDefinition.RegisterThen(strRegex: string; action: TActionS; strFileName: string; iLineNum:String);
 begin
-  TWorld.Get().RegisterAction(strRegex, action);
+  TWorld.Get().RegisterAction(strRegex, action, strFileName, StrToInt(iLineNum));
 end;
 
-procedure TStepDefinition.RegisterThen(strRegex: string; action: TActionB);
+procedure TStepDefinition.RegisterThen(strRegex: string; action: TActionB; strFileName: string; iLineNum:String);
 begin
-  TWorld.Get().RegisterAction(strRegex, action);
+  TWorld.Get().RegisterAction(strRegex, action, strFileName, StrToInt(iLineNum));
 end;
 
 procedure TStepDefinition.RegisterSteps();
@@ -245,7 +249,7 @@ constructor TStepMatches.Create();
 begin
   valPositions := TList.Create();
   lineNo:= 0;
-  fileName:= 'Unkown';
+  fileName:= 'Unknown';
   Id:= '';
   regex:= '';
 end;
@@ -311,59 +315,70 @@ begin
   Result := __World;
 end;
 
-procedure TWorld.RegisterAction(strRegex: string; action: TActionNoParams);
+procedure TWorld.RegisterAction(strRegex: string; action: TActionNoParams; strFileName: string; iLineNum:Integer);
 var lookup: TLookupAction;
 begin
-  lookup := TLookupAction.Create();
-  lookup.ActionRegx:= strRegex;
+  lookup := TLookupAction.Create(strRegex, strFileName, iLineNum);
   lookup.ActionNoParams:= action;
   FActions.Add(lookup);
 end;
 
-procedure TWorld.RegisterAction(strRegex: string; action: TActionStrList);
+procedure TWorld.RegisterAction(strRegex: string; action: TActionStrList; strFileName: string; iLineNum:Integer);
 var lookup: TLookupAction;
 begin
-  lookup := TLookupAction.Create();
-  lookup.ActionRegx:= strRegex;
+  lookup := TLookupAction.Create(strRegex, strFileName, iLineNum);
   lookup.ActionStrList:= action;
   FActions.Add(lookup);
 end;
 
-procedure TWorld.RegisterAction(strRegex: string; action: TActionI);
+procedure TWorld.RegisterAction(strRegex: string; action: TActionI; strFileName: string; iLineNum:Integer);
 var lookup: TLookupAction;
 begin
-  lookup := TLookupAction.Create();
-  lookup.ActionRegx:= strRegex;
+  lookup := TLookupAction.Create(strRegex, strFileName, iLineNum);
   lookup.ActionI:= action;
   FActions.Add(lookup);
 end;
 
-procedure TWorld.RegisterAction(strRegex: string; action: TActionD);
+procedure TWorld.RegisterAction(strRegex: string; action: TActionD; strFileName: string; iLineNum:Integer);
 var lookup: TLookupAction;
 begin
-  lookup := TLookupAction.Create();
-  lookup.ActionRegx:= strRegex;
+  lookup := TLookupAction.Create(strRegex, strFileName, iLineNum);
   lookup.ActionD:= action;
+
   FActions.Add(lookup);
 end;
 
-procedure TWorld.RegisterAction(strRegex: string; action: TActionS);
+procedure TWorld.RegisterAction(strRegex: string; action: TActionS; strFileName: string; iLineNum:Integer);
 var lookup: TLookupAction;
 begin
-  lookup := TLookupAction.Create();
-  lookup.ActionRegx:= strRegex;
+  lookup := TLookupAction.Create(strRegex, strFileName, iLineNum);
   lookup.ActionS:= action;
   FActions.Add(lookup);
 end;
 
-procedure TWorld.RegisterAction(strRegex: string; action: TActionB);
+procedure TWorld.RegisterAction(strRegex: string; action: TActionB; strFileName: string; iLineNum:Integer);
 var lookup: TLookupAction;
 begin
-  lookup := TLookupAction.Create();
-  lookup.ActionRegx:= strRegex;
+  lookup := TLookupAction.Create(strRegex, strFileName, iLineNum);
   lookup.ActionB:= action;
   FActions.Add(lookup);
 end;
+
+constructor TLookupAction.Create(strRegEx, fname: String; iLineNo: Integer);
+begin
+  fileName:= fname;
+  lineNo:= iLineNo;
+
+  ActionRegx := strRegEx;
+  ActionNoParams:= nil;
+
+  ActionStrList:= nil;
+  ActionI:= nil;
+  ActionD:= nil;
+  ActionS:= nil;
+  ActionB:= nil;
+end;
+
 
 function getCharPosition(text: String; bytePos: Integer): Integer;
 begin
@@ -372,9 +387,7 @@ end;
 
 function TWorld.FindStepMatches(strNameToMatch: string): TStepMatches;
 var iLoop: Integer;
-    imatch: Integer;
     valPos: TValPos;
-    PrevPos : PtrInt;
     regex: TRegExpr;
     matchPos: Integer;
     matchLen: Integer;
@@ -390,13 +403,16 @@ begin
     regex := TRegExpr.Create();
     regex.Expression := TLookupAction(FActions[iLoop]).ActionRegx;
 
-    PrevPos := 1;
     if regex.Exec(strNameToMatch) then
     begin
       iSubExp := 1;
       Result := TStepMatches.Create();
       Result.Id:= IntToStr(iLoop);
       Result.RegEx := TLookupAction(FActions[iLoop]).ActionRegx;
+      Result.fileName:= TLookupAction(FActions[iLoop]).fileName;
+      Result.lineNo:= TLookupAction(FActions[iLoop]).lineNo;
+      WriteLn('fname:' + Result.fileName);
+      WriteLn('lineno:' + inttostr(Result.lineNo));
       while(iSubExp <= regex.SubExprMatchCount)   do
       begin
         matchPos := regex.MatchPos[iSubExp];

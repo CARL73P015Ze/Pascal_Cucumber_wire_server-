@@ -109,9 +109,10 @@ end;
 
 procedure TCalculatorSteps.RegisterSteps();
 begin
-	RegisterGiven('^I have entered (\d+) into the calculator$', @IHaveEnteredIntoTheCalculator);
-	RegisterWhen('^I press divide$', @IPressDivide);
-  RegisterThen('^the result should be ([-+]?([0-9]*\.[0-9]+|[0-9]+)) on the screen$', @CalculationResult);
+  RegisterGiven('^I have entered (\d+) into the calculator$',@IHaveEnteredIntoTheCalculator, ''+{$i %FILE%}, {$i %LINE%});
+  RegisterWhen('^I press divide$', @IPressDivide, {$i %FILE%}, {$i %LINE%});
+  RegisterThen('^the result should be ([-+]?([0-9]*\.[0-9]+|[0-9]+)) on the screen$',
+               @CalculationResult, {$i %FILE%}, {$i %LINE%});
 end;
 
 procedure TConvertingCells.IAmLoggedInAsABuyer();
@@ -137,13 +138,13 @@ end;
 
 procedure TConvertingCells.RegisterSteps();
 begin
-	RegisterGiven('^I am logged in as a buyer$', @IAmLoggedInAsABuyer);
-	RegisterWhen('^I view warranty options$', @IViewWarrantyOptions);
-  RegisterThen('^I should see the following options:$', @IShouldSeeTheFollingOptions);
+  RegisterGiven('^I am logged in as a buyer$', @IAmLoggedInAsABuyer,
+                {$i %FILE%}, {$i %LINE%});
+  RegisterWhen('^I view warranty options$', @IViewWarrantyOptions,
+               {$i %FILE%}, {$i %LINE%});
+  RegisterThen('^I should see the following options:$',
+               @IShouldSeeTheFollingOptions, {$i %FILE%}, {$i %LINE%});
 end;
-
-
-
 
 procedure TSendingAnItemToCarl.IHaveTheCompanyConfiguration(const strList: TStringList);
 begin
@@ -162,9 +163,11 @@ end;
 
 procedure TSendingAnItemToCarl.RegisterSteps();
 begin
-  RegisterGiven('^I have the company configuration:$', @IHaveTheCompanyConfiguration);
-  RegisterWhen('^I Click Send$', @IClickSend);
-  RegisterWhen('^([a-zA-Z]+) receives the message$', @ReveivesTheMessage);
+  RegisterGiven('^I have the company configuration:$',
+                @IHaveTheCompanyConfiguration, {$i %FILE%}, {$i %LINE%});
+  RegisterWhen('^I Click Send$', @IClickSend, {$i %FILE%}, {$i %LINE%});
+  RegisterWhen('^([a-zA-Z]+) receives the message$', @ReveivesTheMessage,
+               {$i %FILE%}, {$i %LINE%});
 end;
 
 initialization

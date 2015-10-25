@@ -78,6 +78,8 @@ begin
   FvalPositions := TStepMatches.Create();
   FvalPositions.Id := valPositions.Id;
   FvalPositions.regex := valPositions.regex;
+  FvalPositions.fileName:= valPositions.fileName;
+  FvalPositions.lineNo:= valPositions.lineNo;
 
   iLoop := 0;
   while(iLoop < valPositions.Count()) do
