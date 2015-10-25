@@ -115,7 +115,7 @@ begin
   param :=  TJSONArray.Create();
   param.Add(TJSONObject.Create(['regexp', FvalPositions.RegEx,
                                'id', FvalPositions.id,
-                              'source', '??',
+                              'source', {$I %FILE%}+':' + {$I %LINE%},  // FIXME
                               'args', args]));
 
   jsonData := TJSONArray.Create(['success', param]);
